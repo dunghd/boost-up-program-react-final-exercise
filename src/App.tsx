@@ -1,10 +1,9 @@
-import { AppBar } from '@material-ui/core';
-import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
-import TabRouteNavs, { CustomTab } from './common/components/TabRoutesNav';
-import ProjectList from './screens/ProjectList/ProjectList';
-
+import React from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+import NavRoutes, { ICustomNav } from "./common/components/NavRoutes";
+import ProjectDetail from "./screens/ProjectDetail/ProjectDetail";
+import ProjectList from "./screens/ProjectList/ProjectList";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -13,42 +12,43 @@ const queryClient = new QueryClient({
   },
 });
 
-const MainTabs: CustomTab[] = [
+const MainTabs: ICustomNav[] = [
   {
-    key: 'home',
-    title: 'Home',
-    href: '/home',
+    key: "home",
+    title: "Home",
+    href: "/home",
   },
   {
-    key: 'project-list',
-    title: 'Project List',
-    href: '/project-list',
+    key: "project-list",
+    title: "Project List",
+    href: "/project-list",
   },
 ];
 
-function App() {
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <main>
-          <AppBar position='static'>
-            <TabRouteNavs tabs={MainTabs} />
-          </AppBar>
+          <NavRoutes tabs={MainTabs} />
           <Switch>
-            <Route path='/project-list'>
+            <Route exact path="/project-list">
               <ProjectList />
             </Route>
-            <Route path='/home' exact>
+            <Route path="/project-list/:id">
+              <ProjectDetail />
+            </Route>
+            <Route path="/home" exact>
               Home
             </Route>
-            <Route path='/'>
-              <Redirect to='/home' />
+            <Route path="/">
+              <Redirect to="/home" />
             </Route>
           </Switch>
         </main>
       </BrowserRouter>
     </QueryClientProvider>
   );
-}
+};
 
 export default App;

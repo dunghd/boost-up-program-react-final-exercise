@@ -1,66 +1,95 @@
-import { LinearProgress } from '@material-ui/core';
-import { DataGrid, GridCellParams, GridColumns } from '@material-ui/data-grid';
-import React from 'react';
-import useProjects from '../../hooks/useProjects';
+import React from "react";
+import { Spinner } from "react-bootstrap";
+import BootstrapTable from "react-bootstrap-table-next";
+import { useHistory } from "react-router-dom";
+import useProjects from "../../hooks/useProjects";
 
-const renderDate = (params: GridCellParams) => <>{params.value ? (new Date(params.value as string)).toLocaleDateString('de-CH') : ''}</>
-
-const columns: GridColumns = [
-  {
-    field: 'number',
-    headerName: 'Number',
-    width: 150
-  },
-  {
-    field: 'name',
-    headerName: 'Name',
-    width: 400
-  },
-  {
-    field: 'customer',
-    headerName: 'Customer',
-    width: 400
-  },
-  {
-    field: 'startDate',
-    headerName: 'Start Date',
-    width: 150,
-    renderCell: renderDate
-  },
-  {
-    field: 'endDate',
-    headerName: 'End Date',
-    width: 150,
-    renderCell: renderDate
-  },
-  {
-    field: 'group',
-    headerName: 'Group',
-    width: 150
-  },
-  {
-    field: 'members',
-    headerName: 'Members',
-    width: 300
-  },
-  {
-    field: 'status',
-    headerName: 'Status',
-    width: 150
-  },
-];
+const renderDate = (cell: any) => {
+  let dateObj = cell;
+  if (typeof cell !== "object") {
+    dateObj = new Date(cell);
+  }
+  return `${("0" + dateObj.getUTCDate()).slice(-2)}/${(
+    "0" +
+    (dateObj.getUTCMonth() + 1)
+  ).slice(-2)}/${dateObj.getUTCFullYear()}`;
+};
 
 const ProjectList = (): JSX.Element => {
   const { data, isLoading } = useProjects();
+  const history = useHistory();
+
+  const columns = [
+    {
+      dataField: "number",
+      text: "Number",
+      width: 150,
+      events: {
+        onClick: (
+          e: any,
+          column: any,
+          columnIndex: any,
+          row: any,
+          rowIndex: any
+        ) => {
+          history.push(`/project-list/${row.id}`);
+        },
+      },
+      style: {
+        cursor: "pointer",
+        textDecoration: "underline",
+      },
+    },
+    {
+      dataField: "name",
+      text: "Name",
+      width: 400,
+    },
+    {
+      dataField: "customer",
+      text: "Customer",
+      width: 400,
+    },
+    {
+      dataField: "startDate",
+      text: "Start Date",
+      width: 150,
+      formatter: renderDate,
+    },
+    {
+      dataField: "endDate",
+      text: "End Date",
+      width: 150,
+      formatter: renderDate,
+    },
+    {
+      dataField: "group",
+      text: "Group",
+      width: 150,
+    },
+    {
+      dataField: "members",
+      text: "Members",
+      width: 300,
+    },
+    {
+      dataField: "status",
+      text: "Status",
+      width: 150,
+    },
+  ];
+
   return isLoading ? (
-    <LinearProgress />
+    <Spinner animation="border" role="status">
+      <span className="visually-hidden">Loading...</span>
+    </Spinner>
   ) : (
-    <div style={{ height: '70vh', width: '100%' }}>
-    <div style={{ display: 'flex', height: '100%' }}>
-      <div style={{ flexGrow: 1 }}>
-        <DataGrid rows={data || []} columns={columns} />
+    <div style={{ height: "70vh", width: "100%" }}>
+      <div style={{ display: "flex", height: "100%" }}>
+        <div style={{ flexGrow: 1 }}>
+          <BootstrapTable keyField="id" data={data || []} columns={columns} />
+        </div>
       </div>
-    </div>
     </div>
   );
 };

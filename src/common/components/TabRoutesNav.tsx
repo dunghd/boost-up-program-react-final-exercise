@@ -1,12 +1,11 @@
-import { Tabs } from "@material-ui/core";
-import Tab from "@material-ui/core/Tab";
 import React, { useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Tab, Tabs } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 
 export type TabRouteNavsProps = {
-  tabs: CustomTab[],
-  customRouterLink?: React.ElementType,
-  customStyle?: string
+  tabs: CustomTab[];
+  customRouterLink?: React.ElementType;
+  customStyle?: string;
 };
 
 export type CustomTab = {
@@ -16,47 +15,27 @@ export type CustomTab = {
   tabMatchResolver?: (locationPathname: string) => boolean;
 };
 
-const TabRouteNavs = (props: React.PropsWithChildren<TabRouteNavsProps>): JSX.Element => {
-  const { tabs,
-    customRouterLink,
-    customStyle
-  } = props;
+const TabRouteNavs = (
+  props: React.PropsWithChildren<TabRouteNavsProps>
+): JSX.Element => {
+  const { tabs, customRouterLink, customStyle } = props;
 
   const location = useLocation();
-  const matchedIndex = tabs.findIndex(
-    (t) =>
-      location.pathname.includes(t.href) ||
-      (t.tabMatchResolver && t.tabMatchResolver(location.pathname))
-  );
-
-  const [value, setValue] = React.useState(matchedIndex);
+  const [value, setValue] = React.useState<string>(location.pathname);
 
   useEffect(() => {
-    setValue(matchedIndex);
-  }, [matchedIndex]);
-  
-  const onChangeHandler = (_: React.ChangeEvent<unknown>, newValue: number) => {
-    setValue(newValue);
+    setValue(location.pathname);
+  }, [location.pathname]);
+
+  const onChangeHandler = (eventKey: string | null) => {
+    setValue(eventKey!);
   };
 
   return (
-    <Tabs
-      value={value}
-      indicatorColor="primary"
-      onChange={onChangeHandler}
-      className={customStyle}
-    >
-      {
-        tabs.map((tab, index) => (
-          <Tab
-            key={tab.key}
-            label={tab.title}
-            to={tab.href}
-            component={customRouterLink ? customRouterLink : Link}
-            value={index}
-          />
-        ))
-      }
+    <Tabs activeKey={value} onSelect={onChangeHandler} className={customStyle}>
+      {tabs.map((tab, index) => (
+        <Tab key={tab.key} title={tab.title} />
+      ))}
     </Tabs>
   );
 };
