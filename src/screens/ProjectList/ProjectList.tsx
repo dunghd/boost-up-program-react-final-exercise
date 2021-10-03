@@ -1,7 +1,7 @@
 import React from "react";
-import { Spinner } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
 import { useHistory } from "react-router-dom";
+import CommonSpinner from "../../common/components/CommonSpinner";
 import useProjects from "../../hooks/useProjects";
 
 const renderDate = (cell: any) => {
@@ -80,9 +80,7 @@ const ProjectList = (): JSX.Element => {
   ];
 
   return isLoading ? (
-    <Spinner animation="border" role="status">
-      <span className="visually-hidden">Loading...</span>
-    </Spinner>
+    <CommonSpinner />
   ) : (
     <div style={{ height: "70vh", width: "100%" }}>
       <div style={{ display: "flex", height: "100%" }}>
